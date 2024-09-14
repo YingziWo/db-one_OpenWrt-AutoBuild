@@ -317,7 +317,7 @@ jobs:
         ls -la
         cd /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/openwrt
         ls -la
-        mkdir -rf /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/openwrt/.ssh
+        mkdir -m 755 /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/openwrt/.ssh
     
     - name: SSH 连接到 Actions
       uses: P3TERX/ssh2actions@main
