@@ -261,7 +261,7 @@ jobs:
       id: compile
       run: |
         cd openwrt
-        make -j$(nproc) || make -j1 V=s
+        make -j1 V=s         #-j$(nproc) || make -j1 V=s
 
     - name: 检查空间使用情况
       run: |
