@@ -293,7 +293,7 @@ jobs:
         mkdir -p ./artifact/vmware
         mkdir -p ./artifact/package
         mkdir -p ./artifact/buildinfo
-        cp -rf $(find openwrt/bin/packages/ -type f -name "*.gz") ./artifact/firmware/
+       
         echo "编译完成时间..."
         START_SECONDS=${{ env.START_SECONDS }}
         END_TIME=`date +'%Y-%m-%d %H:%M:%S'`
