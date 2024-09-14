@@ -329,6 +329,13 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
 
+    - name: 打包db-one_OpenWrt-AutoBuild目录到./artifact/firmware下
+      run: |
+        cd /home/runner/work/db-one_OpenWrt-AutoBuild
+        tar -czvf db-one-all.tar.gz db-one_OpenWrt-AutoBuild
+        cp -rf db-one-all.tar.gz ./db-one_OpenWrt-AutoBuild/artifact/firmware
+        rm -rf db-one-all.tar.gz
+
     - name: 上传固件文件
       if: env.UPLOAD_FIRMWARE == 'true'
       uses: actions/upload-artifact@main
