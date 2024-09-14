@@ -300,12 +300,12 @@ jobs:
         HOUR=$(( $SECONDS/3600 )) && MIN=$(( ($SECONDS-${HOUR}*3600)/60 )) && SEC=$(( $SECONDS-${HOUR}*3600-${MIN}*60 ))
         echo "BUILD_TIME=${HOUR}时${MIN}分${SEC}秒" >> $GITHUB_ENV
 
-    - name: SSH 连接到 Actions
-      uses: P3TERX/ssh2actions@v1.0.0
-      if: env.SSH_ACTIONS == 'true' || (github.event.inputs.SSH_ACTION == 'true')
+    #- name: SSH 连接到 Actions
+    #  uses: P3TERX/ssh2actions@v1.0.0
+    #  if: env.SSH_ACTIONS == 'true' || (github.event.inputs.SSH_ACTION == 'true')
       #if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
-      env:
-        GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+    #  env:
+    #    GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
 
     - name: 上传固件文件
       if: steps.compile.outcome == 'success' && env.UPLOAD_FIRMWARE == 'true'
