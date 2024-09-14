@@ -309,11 +309,12 @@ jobs:
     #    HOUR=$(( $SECONDS/3600 )) && MIN=$(( ($SECONDS-${HOUR}*3600)/60 )) && SEC=$(( $SECONDS-${HOUR}*3600-${MIN}*60 ))
     #    echo "BUILD_TIME=${HOUR}时${MIN}分${SEC}秒" >> $GITHUB_ENV
 
-    - name: 确认工作目录
+    - name: 确认工作目录,转到openwrt目录下，为ssh连接创造条件
       run: |
         pwd
         ls -la
-        cd openwrt
+        cd /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/openwrt
+        ls -la
     
     - name: SSH 连接到 Actions
       uses: P3TERX/ssh2actions@v1.0.0
