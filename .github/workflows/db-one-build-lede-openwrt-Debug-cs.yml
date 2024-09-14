@@ -313,11 +313,13 @@ jobs:
       run: |
         pwd
         ls -la
+        cd openwrt
+        ls -la
         cd /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/openwrt
         ls -la
     
     - name: SSH 连接到 Actions
-      uses: P3TERX/ssh2actions@v1.0.0
+      uses: P3TERX/ssh2actions@main
       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
       env:
         GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
