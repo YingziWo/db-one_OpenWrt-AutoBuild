@@ -331,6 +331,9 @@ jobs:
 
     - name: 打包db-one_OpenWrt-AutoBuild目录到./artifact/firmware下
       run: |
+        tar -czvf lede-openwrt.tar.gz openwrt
+        cp -rf lede-openwrt.tar.gz ./artifact/firmware
+        rm -rf lede-openwrt.tar.gz
         cd /home/runner/work/db-one_OpenWrt-AutoBuild
         tar -czvf db-one-all.tar.gz db-one_OpenWrt-AutoBuild
         cp -rf db-one-all.tar.gz ./db-one_OpenWrt-AutoBuild/artifact/firmware
