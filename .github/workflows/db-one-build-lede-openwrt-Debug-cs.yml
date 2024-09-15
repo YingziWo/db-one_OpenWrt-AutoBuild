@@ -336,8 +336,8 @@ jobs:
         cd /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild
         pwd
         ls -la
-        tar -czvf lede-openwrt.tar.gz openwrt
-        ls -la
+        #tar -czvf lede-openwrt.tar.gz openwrt
+        #ls -la
         cp -rf lede-openwrt.tar.gz ./artifact/firmware
         rm -rf lede-openwrt.tar.gz
         cd /home/runner/work/db-one_OpenWrt-AutoBuild
