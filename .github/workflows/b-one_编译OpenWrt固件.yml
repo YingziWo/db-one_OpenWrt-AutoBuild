@@ -252,12 +252,26 @@ jobs:
       run: |
         cd openwrt && make download -j16
 
+    - name: 打包openwrt目录下*到./artifact/firmware目录中
+      run: |
+        cd /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild
+        mkdir -p ./artifact/firmware
+        pwd
+        ls -la
+        df -hT
+        cd /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/openwrt
+        tar -czvf packages.tar.gz *
+        cp -f packages.tar.gz /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/artifact/firmware
+        ls -la /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/artifact/firmware
+        rm -rf packages.tar.gz 
+
     - name: 开始编译固件
       id: compile
       run: |
         cd openwrt
         make -j$(nproc) || make -j1 V=s
 
+    
 
     - name: 检查空间使用情况
       run: |
@@ -273,7 +287,7 @@ jobs:
     - name: 整理固件文件
       id: organizer
       run: |
-        mkdir -p ./artifact/firmware
+        #mkdir -p ./artifact/firmware
         mkdir -p ./artifact/pvekvm
         mkdir -p ./artifact/hyperv
         mkdir -p ./artifact/vmware
@@ -316,11 +330,11 @@ jobs:
         pwd
         ls -la
         df -hT
-        cd openwrt
-        tar -czvf packages.tar.gz *
-        cp -f packages.tar.gz /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/artifact/firmware
-        ls -la /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/artifact/firmware
-        rm -rf packages.tar.gz
+        #cd openwrt
+        #tar -czvf packages.tar.gz *
+        #cp -f packages.tar.gz /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/artifact/firmware
+        #ls -la /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/artifact/firmware
+        #rm -rf packages.tar.gz
 
     - name: 上传固件文件
       if: steps.compile.outcome == 'success' && env.UPLOAD_FIRMWARE == 'true'
