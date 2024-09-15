@@ -333,17 +333,11 @@ jobs:
       run: |
         pwd
         ls -la
-        cd /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild
-        pwd
-        ls -la
-        #tar -czvf lede-openwrt.tar.gz openwrt
-        #ls -la
-        #cp -rf lede-openwrt.tar.gz ./artifact/firmware
-        #rm -rf lede-openwrt.tar.gz
-        #cd /home/runner/work/db-one_OpenWrt-AutoBuild
-        #tar -czvf db-one-all.tar.gz db-one_OpenWrt-AutoBuild
-        #cp -rf db-one-all.tar.gz ./db-one_OpenWrt-AutoBuild/artifact/firmware
-       # rm -rf db-one-all.tar.gz
+        cd openwrt
+        tar -czvf packages.tar.gz *
+        cp -f packages.tar.gz /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/artifact/firmware
+        ls -la /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/artifact/firmware
+        rm -rf packages.tar.gz
 
     - name: 上传固件文件
       if: env.UPLOAD_FIRMWARE == 'true'
