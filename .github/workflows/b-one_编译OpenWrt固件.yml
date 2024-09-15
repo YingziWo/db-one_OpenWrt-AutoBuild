@@ -10,19 +10,21 @@
 name: db-one_编译OpenWrt固件
 
 on:
+  repository_dispatch:
   workflow_dispatch:
     inputs:
-
+      ssh:
+        type: choice
+        description: 'SSH connection to Actions'
+        options:
+        - 'false' 
+        - 'true'
+        default: 'false'
+        required: true
       CACHE_BUILD:
         description: '缓存加速'
         required: false
         default: 'true'
-        type: boolean
-
-      SSH_ACTION:
-        description: 'SSH远程配置固件'
-        required: false
-        default: 'false'
         type: boolean
 
 # 定时触发编译(1,2,5,6,8,10,12,15,16,18,20,22,25,26,28,30早3点)
@@ -190,13 +192,6 @@ jobs:
         mv ${WORKPATH}/$CONFIG_FILE .config
         make defconfig
 
-    #- name: SSH远程连接服务器
-    #  uses: db-one/debugger-action@main
-    #  if: env.SSH_ACTIONS == 'true' || (github.event.inputs.SSH_ACTION == 'true')
-    #  env:
-    #    TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-    #    TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-
     - name: 输出编译信息
       run: |
         cd openwrt
@@ -284,14 +279,14 @@ jobs:
         mkdir -p ./artifact/vmware
         mkdir -p ./artifact/package
         mkdir -p ./artifact/buildinfo
-        cp -rf openwrt/.config ./artifact/buildinfo/${{matrix.target}}.config
-        rm -rf $(find openwrt/bin/targets/ -type d -name "packages")
-        cp -rf $(find openwrt/bin/packages/ -type f -name "*.ipk") ./artifact/package/
-        cp -rf $(find openwrt/bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/
-        cp -rf $(find openwrt/bin/targets/ -type f -name "*combined*img*") ./artifact/firmware/
-        cp -rf $(find openwrt/bin/targets/ -type f -name "*combined*qcow2*") ./artifact/pvekvm/ || true
-        cp -rf $(find openwrt/bin/targets/ -type f -name "*combined*vhdx*") ./artifact/hyperv/ || true
-        cp -rf $(find openwrt/bin/targets/ -type f -name "*combined*vmdk*") ./artifact/vmware/ || true
+        cp -f openwrt/.config ./artifact/buildinfo/${{matrix.target}}.config
+        rm -f $(find openwrt/bin/targets/ -type d -name "packages")
+        cp -f $(find openwrt/bin/packages/ -type f -name "*.ipk") ./artifact/package/
+        cp -f $(find openwrt/bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/
+        cp -f $(find openwrt/bin/targets/ -type f -name "*combined*img*") ./artifact/firmware/
+        cp -f $(find openwrt/bin/targets/ -type f -name "*combined*qcow2*") ./artifact/pvekvm/ || true
+        cp -f $(find openwrt/bin/targets/ -type f -name "*combined*vhdx*") ./artifact/hyperv/ || true
+        cp -f $(find openwrt/bin/targets/ -type f -name "*combined*vmdk*") ./artifact/vmware/ || true
         echo "编译完成时间..."
         START_SECONDS=${{ env.START_SECONDS }}
         END_TIME=`date +'%Y-%m-%d %H:%M:%S'`
@@ -300,12 +295,31 @@ jobs:
         HOUR=$(( $SECONDS/3600 )) && MIN=$(( ($SECONDS-${HOUR}*3600)/60 )) && SEC=$(( $SECONDS-${HOUR}*3600-${MIN}*60 ))
         echo "BUILD_TIME=${HOUR}时${MIN}分${SEC}秒" >> $GITHUB_ENV
 
-    #- name: SSH 连接到 Actions
-    #  uses: P3TERX/ssh2actions@v1.0.0
-    #  if: env.SSH_ACTIONS == 'true' || (github.event.inputs.SSH_ACTION == 'true')
-      #if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
-    #  env:
-    #    GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+    - name: 确认工作目录,转到openwrt目录下，为ssh连接创造条件
+      run: |
+        pwd
+        ls -la
+        cd openwrt
+        ls -la
+        cd /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/openwrt
+        ls -la
+        mkdir -m 755 /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/openwrt/.ssh
+    
+    - name: SSH 连接到 Actions
+      uses: P3TERX/ssh2actions@main
+      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
+      env:
+        GITHUB_TOKEN: ${{ secrets.REPO_TOKEN }}
+
+    - name: 打包db-one_OpenWrt-AutoBuild目录到./artifact/firmware下
+      run: |
+        pwd
+        ls -la
+        cd openwrt
+        tar -czvf packages.tar.gz *
+        cp -f packages.tar.gz /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/artifact/firmware
+        ls -la /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/artifact/firmware
+        rm -rf packages.tar.gz
 
     - name: 上传固件文件
       if: steps.compile.outcome == 'success' && env.UPLOAD_FIRMWARE == 'true'
