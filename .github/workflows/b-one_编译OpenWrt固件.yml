@@ -280,7 +280,7 @@ jobs:
         mkdir -p ./artifact/package
         mkdir -p ./artifact/buildinfo
         cp -f openwrt/.config ./artifact/buildinfo/${{matrix.target}}.config
-        #rm -rf $(find openwrt/bin/targets/ -type d -name "packages")
+        rm -rf $(find openwrt/bin/targets/ -type d -name "packages")
         cp -f $(find openwrt/bin/packages/ -type f -name "*.ipk") ./artifact/package/
         cp -f $(find openwrt/bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/
         cp -f $(find openwrt/bin/targets/ -type f -name "*combined*img*") ./artifact/firmware/
@@ -315,6 +315,7 @@ jobs:
       run: |
         pwd
         ls -la
+        df -hT
         cd openwrt
         tar -czvf packages.tar.gz *
         cp -f packages.tar.gz /home/runner/work/db-one_OpenWrt-AutoBuild/db-one_OpenWrt-AutoBuild/artifact/firmware
